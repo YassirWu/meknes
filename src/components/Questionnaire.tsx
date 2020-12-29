@@ -1,105 +1,19 @@
 import React from "react";
-import clsx from "clsx";
-
-export const QuestionHead: React.FunctionComponent = ({ children }) => {
-  return <>{children}</>;
-};
-
-export const PreviousQuestion: React.FunctionComponent = ({ children }) => {
-  const { userResponse } = React.useContext(QcmContext);
-  const { previousQuestion } = React.useContext(QuestionnaireContext);
-
-  return (
-    <button disabled={userResponse === undefined} onClick={previousQuestion}>
-      {children}
-    </button>
-  );
-};
-
-export const NextQuestion: React.FunctionComponent = ({ children }) => {
-  const { userResponse } = React.useContext(QcmContext);
-  const { nextQuestion } = React.useContext(QuestionnaireContext);
-
-  return (
-    <button disabled={userResponse === undefined} onClick={nextQuestion}>
-      {children}
-    </button>
-  );
-};
-
-type AnswerProps = {
-  idResponse: number;
-  isValid?: boolean;
-};
-
-export const Answer: React.FunctionComponent<AnswerProps> = ({
-  idResponse,
-  isValid = false,
-  children,
-}) => {
-  const { userResponse, validateAnswer } = React.useContext(QcmContext);
-
-  const className = clsx({
-    answer: true,
-    "answer--disabled": userResponse !== undefined,
-    "answer--wrong":
-      userResponse !== undefined &&
-      idResponse === userResponse &&
-      isValid === false,
-    "answer--good": userResponse !== undefined && isValid === true,
-  });
-
-  return (
-    <button
-      disabled={userResponse !== undefined}
-      onClick={() => {
-        validateAnswer(idResponse, isValid);
-      }}
-      className={className}
-    >
-      {children}
-    </button>
-  );
-};
-
-type QcmContextProps = {
-  userResponse?: number;
-  validateAnswer: (idResponse: number, isValid: boolean) => void;
-};
-const QcmContext = React.createContext<QcmContextProps>({
-  validateAnswer: () => {},
-});
-
-type QcmProps = {};
-
-export const Qcm: React.FunctionComponent<QcmProps> = ({ children }) => {
-  const [userResponse, setUserResponse] = React.useState<any>(undefined);
-
-  const { onAnswer } = React.useContext(QuestionnaireContext);
-
-  return (
-    <QcmContext.Provider
-      value={{
-        validateAnswer: (userResponse, isValid) => {
-          setUserResponse(userResponse);
-          onAnswer(userResponse, isValid);
-        },
-        userResponse,
-      }}
-    >
-      {children}
-    </QcmContext.Provider>
-  );
-};
+import {
+  QuestionnaireInformation,
+  newQuestionnaire,
+  AnswerInformation,
+  ResultInformation,
+} from "./model";
 
 export const QuestionnairePage: React.FunctionComponent = ({ children }) => {
   return <>{children}</>;
 };
 
-type BlocQuestionProps = {
+type QuestionnairePageContainerProps = {
   current: boolean;
 };
-export const BlocQuestion: React.FunctionComponent<BlocQuestionProps> = ({
+export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePageContainerProps> = ({
   current,
   children,
 }) => {
@@ -110,68 +24,43 @@ type QuestionnaireContextProps = {
   questionnaire: QuestionnaireInformation;
   nextQuestion: () => void;
   previousQuestion: () => void;
-  onAnswer: (idResponse: number, isValid: boolean) => void;
+  onAnswer: (answer: AnswerInformation) => void;
+  updateQuestionnaire: (questionnaire: QuestionnaireInformation) => void;
 };
-const QuestionnaireContext = React.createContext<QuestionnaireContextProps>({
-  questionnaire: {
-    results: [],
-    numberOfQuestion: 0,
-    score: 0,
-    currentQuestion: 0,
-    currentPage: 0,
-  },
+export const QuestionnaireContext = React.createContext<
+  QuestionnaireContextProps
+>({
+  questionnaire: newQuestionnaire(),
   nextQuestion: () => {},
   previousQuestion: () => {},
   onAnswer: () => {},
+  updateQuestionnaire: () => {},
 });
 
 function initQuestionnaire(
+  questionnaire: QuestionnaireInformation,
   children: React.ReactNode
 ): QuestionnaireInformation {
-  const results: any[] =
+  const results: ResultInformation[] =
     React.Children.map(children, (child, i) => {
       return {
         idQuestion: i,
-        userAnswer: undefined,
-        isValid: undefined,
+        answer: undefined,
+        isAnswered: false,
       };
     }) || [];
 
-  const questionnaire: QuestionnaireInformation = {
+  return {
+    ...questionnaire,
     results,
     numberOfQuestion: results.length,
-    score: 0,
-    currentQuestion: 0,
-    currentPage: 0,
-  };
-
-  return questionnaire;
+  }
 }
 
-export type QuestionnaireInformation = {
-  results: any[];
-  numberOfQuestion: number;
-  score: number;
-  currentQuestion: number;
-  currentPage: number;
-};
-
-type AnswerInformation = {
-  userResponse: number;
-  isValid: boolean;
-};
-
 export const useQuestionnaire = () => {
-  const initialQuestionnaire = {
-    results: [],
-    score: 0,
-    numberOfQuestion: 0,
-    currentQuestion: 0,
-    currentPage: 0,
-  };
   const [questionnaire, setQuestionnaire] = React.useState<
     QuestionnaireInformation
-  >(initialQuestionnaire);
+  >(newQuestionnaire());
 
   return {
     questionnaire,
@@ -179,9 +68,27 @@ export const useQuestionnaire = () => {
   };
 };
 
+export const QuestionnairePages: React.FunctionComponent = ({ children }) => {
+  const { questionnaire, updateQuestionnaire } = React.useContext(QuestionnaireContext);
+
+  React.useEffect(() => {
+    updateQuestionnaire(initQuestionnaire(questionnaire, children));
+  }, []);
+
+  return (
+    <>
+      {React.Children.map(children, (child, i) => {
+        return (
+          <QuestionnairePageContainer current={questionnaire.currentPage === i}>
+            {child}
+          </QuestionnairePageContainer>
+        );
+      })}
+    </>
+  )
+}
+
 type QuestionnaireProps = {
-  questionnaire: QuestionnaireInformation;
-  onUpdateQuestionnaire: (questionnaire: QuestionnaireInformation) => void;
   onAnswer?: (
     answer: AnswerInformation,
     questionnaire: QuestionnaireInformation,
@@ -190,18 +97,14 @@ type QuestionnaireProps = {
 };
 
 export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
-  questionnaire,
-  onUpdateQuestionnaire,
   onAnswer,
   children,
 }) => {
-  React.useEffect(() => {
-    onUpdateQuestionnaire(initQuestionnaire(children));
-  }, []);
+  const { questionnaire, updateQuestionnaire } = useQuestionnaire();
 
   const nextQuestion = () => {
     if (questionnaire.currentPage < questionnaire.numberOfQuestion - 1) {
-      onUpdateQuestionnaire({
+      updateQuestionnaire({
         ...questionnaire,
         currentPage: questionnaire.currentPage + 1,
       });
@@ -209,56 +112,50 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
   };
   const previousQuestion = () => {
     if (questionnaire.currentPage > 0) {
-      onUpdateQuestionnaire({
+      updateQuestionnaire({
         ...questionnaire,
         currentPage: questionnaire.currentPage - 1,
       });
     }
   };
 
-  return (
-    <QuestionnaireContext.Provider
-      value={{
-        questionnaire,
-        nextQuestion,
-        previousQuestion,
-        onAnswer: (userResponse, isValid) => {
-          const results = questionnaire.results.map((result, i) => {
-            if (i === questionnaire.currentPage) {
-              return {
-                ...result,
-                userAnswer: userResponse,
-                isValid,
-              };
-            }
-
-            return result;
-          });
-          const newQuestionnaire: QuestionnaireInformation = {
-            ...questionnaire,
-            results,
-            score: results
-              .filter((r) => r.userAnswer !== undefined)
-              .reduce(
-                (score, result) => (result.isValid ? score + 1 : score),
-                0
-              ),
+  const ctx: QuestionnaireContextProps = {
+    questionnaire,
+    nextQuestion,
+    previousQuestion,
+    onAnswer: (answer) => {
+      const results = questionnaire.results.map((result, i) => {
+        if (i === questionnaire.currentPage) {
+          return {
+            ...result,
+            answer,
+            isAnswered: true,
           };
+        }
 
-          onUpdateQuestionnaire(newQuestionnaire);
+        return result;
+      });
+      const newQuestionnaire: QuestionnaireInformation = {
+        ...questionnaire,
+        results,
+        score: results
+          .filter((r) => r.isAnswered)
+          .reduce(
+            (score, result) => (result.answer?.isValid ? score + 1 : score),
+            0
+          ),
+      };
 
-          onAnswer &&
-            onAnswer({ userResponse, isValid }, newQuestionnaire, nextQuestion);
-        },
-      }}
-    >
-      {React.Children.map(children, (child, i) => {
-        return (
-          <BlocQuestion current={questionnaire.currentPage === i}>
-            {child}
-          </BlocQuestion>
-        );
-      })}
+      updateQuestionnaire(newQuestionnaire);
+
+      onAnswer && onAnswer(answer, newQuestionnaire, nextQuestion);
+    },
+    updateQuestionnaire,
+  };
+
+  return (
+    <QuestionnaireContext.Provider value={ctx}>
+      {children(ctx)}
     </QuestionnaireContext.Provider>
   );
 };
