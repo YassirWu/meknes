@@ -88,7 +88,6 @@ function initQuestionnaire(
   return {
     ...questionnaire,
     pages,
-    numberOfPage: pages.length,
   }
 }
 

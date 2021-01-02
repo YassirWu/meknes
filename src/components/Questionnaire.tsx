@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import {
   QuestionnaireInformation,
   newQuestionnaire,
@@ -28,7 +28,9 @@ export const useQuestionnaire = () => {
   };
 };
 
-type QuestionnaireProps = {};
+type QuestionnaireProps = {
+  children: (context: QuestionnaireContextProps) => ReactElement;
+};
 
 export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
   children,
@@ -36,7 +38,7 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
   const { questionnaire, updateQuestionnaire } = useQuestionnaire();
 
   const nextQuestion = () => {
-    if (questionnaire.currentPage < questionnaire.numberOfPage - 1) {
+    if (questionnaire.currentPage < questionnaire.pages.length - 1) {
       updateQuestionnaire({
         ...questionnaire,
         currentPage: questionnaire.currentPage + 1,

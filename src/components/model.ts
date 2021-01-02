@@ -11,7 +11,6 @@ export type PageInformation = {
 
 export type QuestionnaireInformation = {
   pages: PageInformation[];
-  numberOfPage: number;
   score: number;
   currentPage: number;
 };
@@ -20,7 +19,6 @@ export function newQuestionnaire(): QuestionnaireInformation {
   return {
     pages: [],
     score: 0,
-    numberOfPage: 0,
     currentPage: 0,
   };
 }

@@ -26,10 +26,11 @@ export const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
   const isUserAnswer = isAnswered && idResponse === answer?.userResponse;
 
   const className = clsx({
-    answer: true,
-    "answer--disabled": isAnswered,
-    "answer--wrong": isUserAnswer && !isValid,
-    "answer--good": isAnswered && isValid,
+    "meknes-answer": true,
+    "meknes-answer--disabled": isAnswered,
+    "meknes-answer--user": isUserAnswer,
+    "meknes-answer--wrong": isUserAnswer && !isValid,
+    "meknes-answer--good": isAnswered && isValid,
   });
 
   return (
