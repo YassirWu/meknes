@@ -1,25 +1,32 @@
 export type ResultInformation = {
-  idQuestion: number;
+  idQuestion: string;
   answer?: AnswerInformation;
   isAnswered: boolean;
 };
 
-export type QuestionnaireInformation = {
+export type PageInformation = {
+  idPage: number;
   results: ResultInformation[];
-  numberOfQuestion: number;
+}
+
+export type QuestionnaireInformation = {
+  pages: PageInformation[];
+  numberOfPage: number;
   score: number;
   currentPage: number;
 };
 
 export function newQuestionnaire(): QuestionnaireInformation {
   return {
-    results: [],
+    pages: [],
     score: 0,
-    numberOfQuestion: 0,
+    numberOfPage: 0,
     currentPage: 0,
   };
 }
 
 export type AnswerInformation = {
   isValid: boolean;
+  userResponse: any;
+  // goodResponse?: any;
 };

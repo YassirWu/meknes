@@ -1,11 +1,14 @@
 import React from "react";
 import clsx from "clsx";
-import { QuestionnaireContext } from "./Questionnaire";
+import { QuestionnairePageContext } from "./QuestionnairePage";
 import { AnswerInformation } from "./model";
+import { getUniqId } from "./utils";
 
-type QcmAnswerInformation = AnswerInformation & {
-  userResponse: number;
+type QcmContextProps = {
+  answer?: AnswerInformation;
+  validateAnswer: (userAnswer: any, isValid: boolean) => void;
 };
+const QcmContext = React.createContext<QcmContextProps>(undefined!);
 
 type QcmAnswerProps = {
   idResponse: number;
@@ -17,10 +20,10 @@ export const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
   isValid = false,
   children,
 }) => {
-  const { userResponse, validateAnswer } = React.useContext(QcmContext);
+  const { answer, validateAnswer } = React.useContext(QcmContext);
 
-  const isAnswered = userResponse !== undefined;
-  const isUserAnswer = isAnswered && idResponse === userResponse;
+  const isAnswered = answer?.userResponse !== undefined;
+  const isUserAnswer = isAnswered && idResponse === answer?.userResponse;
 
   const className = clsx({
     answer: true,
@@ -40,27 +43,25 @@ export const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
   );
 };
 
-type QcmContextProps = {
-  userResponse?: number;
-  validateAnswer: (idResponse: number, isValid: boolean) => void;
-};
-const QcmContext = React.createContext<QcmContextProps>({
-  validateAnswer: () => {},
-});
-
 export const Qcm: React.FunctionComponent = ({ children }) => {
-  const [userResponse, setUserResponse] = React.useState<any>(undefined);
+  const [idQuestion] = React.useState(getUniqId());
+  const [answer, setAnswer] = React.useState<AnswerInformation>();
 
-  const { onAnswer } = React.useContext(QuestionnaireContext);
+  const { addQuestion, response } = React.useContext(QuestionnairePageContext);
+
+  React.useEffect(() => {
+    addQuestion(idQuestion)
+  }, []);
 
   return (
     <QcmContext.Provider
       value={{
         validateAnswer: (userResponse, isValid) => {
-          setUserResponse(userResponse);
-          onAnswer({ userResponse, isValid } as QcmAnswerInformation);
+          const updatedAnswer = { userResponse, isValid };
+          setAnswer(updatedAnswer);
+          response(idQuestion, updatedAnswer)
         },
-        userResponse,
+        answer,
       }}
     >
       {children}

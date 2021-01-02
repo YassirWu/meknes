@@ -1,34 +1,33 @@
 import React from "react";
 import { QuestionnaireContext } from "./Questionnaire";
-import { QuestionnaireInformation } from "./model";
+import { QuestionnairePageContext } from "./QuestionnairePage";
+import { ResultInformation } from "./model";
 
-function getIsAnswered(questionnaire: QuestionnaireInformation) {
-  const result = questionnaire.results.find(
-    (result) => result.idQuestion === questionnaire.currentPage
-  );
-
-  return !result || !result.isAnswered;
+function getIsAnswered(results: ResultInformation[]) {
+  return !results.every(q => q.isAnswered)
 }
 
 export const PreviousQuestion: React.FunctionComponent = ({ children }) => {
-  const { previousQuestion, questionnaire } = React.useContext(
+  const { previousQuestion } = React.useContext(
     QuestionnaireContext
   );
+  const { results } = React.useContext(QuestionnairePageContext);
 
   return (
-    <button disabled={getIsAnswered(questionnaire)} onClick={previousQuestion}>
+    <button disabled={getIsAnswered(results)} onClick={previousQuestion}>
       {children}
     </button>
   );
 };
 
 export const NextQuestion: React.FunctionComponent = ({ children }) => {
-  const { nextQuestion, questionnaire } = React.useContext(
+  const { nextQuestion } = React.useContext(
     QuestionnaireContext
   );
+  const { results } = React.useContext(QuestionnairePageContext);
 
   return (
-    <button disabled={getIsAnswered(questionnaire)} onClick={nextQuestion}>
+    <button disabled={getIsAnswered(results)} onClick={nextQuestion}>
       {children}
     </button>
   );
