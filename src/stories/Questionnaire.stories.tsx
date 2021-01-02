@@ -5,36 +5,7 @@ import { Questionnaire } from "../components/Questionnaire";
 import { QuestionnairePages, QuestionnairePage } from '../components/QuestionnairePage';
 import { QcmAnswer, Qcm } from "../components/Qcm";
 import { NextQuestion, PreviousQuestion } from "../components/NavigationButton";
-
-type CustomQcm = {
-  text: string;
-  responses: {
-    id: any
-    text: string;
-    isValid?: boolean;
-  }[];
-}
-
-type CustomQcmProps = {
-  customQcm: CustomQcm;
-};
-
-function CustomQcmComponent({ customQcm }: CustomQcmProps) {
-  return (
-    <Qcm>
-      <p>{customQcm.text}</p>
-      <div className="story-meknes-qcm-questions">
-        {customQcm.responses.map(r => (
-          <QcmAnswer key={r.id} idResponse={r.id} isValid={r.isValid}>{r.text}</QcmAnswer>
-        ))}
-      </div>
-    </Qcm>
-  )
-};
-
-type CustomPage = {
-  customQcm: CustomQcm[],
-}
+import { CustomPage, CustomQcm } from "./utils";
 
 const customPages: CustomPage[] = [
   {
@@ -86,6 +57,23 @@ const customPages: CustomPage[] = [
     ],
   },
 ];
+
+type CustomQcmProps = {
+  customQcm: CustomQcm;
+};
+
+export function CustomQcmComponent({ customQcm }: CustomQcmProps) {
+  return (
+    <Qcm>
+      <p>{customQcm.text}</p>
+      <div className="story-meknes-qcm-questions">
+        {customQcm.responses.map(r => (
+          <QcmAnswer key={r.id} idResponse={r.id} isValid={r.isValid}>{r.text}</QcmAnswer>
+        ))}
+      </div>
+    </Qcm>
+  )
+};
 
 const Template: Story = (args) => {
 
