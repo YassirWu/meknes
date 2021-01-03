@@ -15,6 +15,7 @@ type QuestionnaireContextProps = {
   onAnswer: (idPage: number, results: ResultInformation[]) => void;
   updateQuestionnaire: (questionnaire: QuestionnaireInformation) => void;
   globalConfiguration: GlobalConfiguration;
+  score: number;
 };
 export const QuestionnaireContext = React.createContext<
   QuestionnaireContextProps
@@ -47,6 +48,19 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
     ...defaultGlobalConfiguration,
     ...config,
   };
+
+  const score = React.useMemo(() => {
+    return questionnaire.pages.reduce(
+      (totalScore, page) =>
+        totalScore +
+        page.results.reduce(
+          (pageScore, result) =>
+            result.isValid ? pageScore + result.coefficient : pageScore,
+          0
+        ),
+      0
+    );
+  }, [questionnaire]);
 
   const nextQuestion = () => {
     if (questionnaire.currentPage < questionnaire.pages.length - 1) {
@@ -89,6 +103,7 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
     },
     updateQuestionnaire,
     globalConfiguration: mergedGlobalConfiguration,
+    score,
   };
 
   return (

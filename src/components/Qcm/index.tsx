@@ -12,22 +12,29 @@ type QcmProps = {
   config?: Partial<QcmConfiguration>;
 };
 
-const useQcmInit = () => {
+const useQcmInit = (config: Partial<QcmConfiguration>) => {
   const [idQuestion] = React.useState(getUniqId());
+  const { globalConfiguration } = React.useContext(QuestionnaireContext);
   const { addQuestion } = React.useContext(QuestionnairePageContext);
 
+  const mergedQcmConfiguration = {
+    ...defaultQcmConfiguration,
+    ...globalConfiguration,
+    ...config,
+  };
+
   React.useEffect(() => {
-    addQuestion(idQuestion);
+    addQuestion(idQuestion, mergedQcmConfiguration.coefficient);
   }, []);
 
-  return { idQuestion };
+  return { idQuestion, mergedQcmConfiguration };
 };
 
 export const Qcm: React.FunctionComponent<QcmProps> = ({
   children,
   config = {},
 }) => {
-  const { idQuestion } = useQcmInit();
+  const { idQuestion, mergedQcmConfiguration } = useQcmInit(config);
   const [answer, setAnswer] = React.useState<AnswerInformation<number[]>>({
     userResponse: [],
   });
@@ -35,13 +42,6 @@ export const Qcm: React.FunctionComponent<QcmProps> = ({
   const [isSubmittingQcm, setIsSubmittingQcm] = React.useState(false);
 
   const { response } = React.useContext(QuestionnairePageContext);
-  const { globalConfiguration } = React.useContext(QuestionnaireContext);
-
-  const mergedQcmConfiguration = {
-    ...defaultQcmConfiguration,
-    ...globalConfiguration,
-    ...config,
-  };
 
   const submitQcm = (answer: AnswerInformation<number[]>) => {
     const isValid = config.multiple
@@ -68,7 +68,10 @@ export const Qcm: React.FunctionComponent<QcmProps> = ({
     };
 
     setAnswer(updatedAnswer);
-    if (mergedQcmConfiguration.validOnSelect) {
+    if (
+      mergedQcmConfiguration.validOnSelect &&
+      !mergedQcmConfiguration.multiple
+    ) {
       submitQcm(updatedAnswer);
     }
   };

@@ -10,7 +10,6 @@ import { Qcm } from "../components/Qcm";
 import { NextQuestion, PreviousQuestion } from "../components/NavigationButton";
 import { CustomPage, CustomQcm } from "./utils";
 import QcmAnswer from "../components/Qcm/QcmAnswer";
-import { QcmConfiguration } from "../components/Qcm/QcmContext";
 import ValidQcmAnswer from "../components/Qcm/ValidQcmAnswer";
 
 const customPages: CustomPage[] = [
@@ -24,6 +23,9 @@ const customPages: CustomPage[] = [
           { id: 3, text: "Réponse 3", isValid: true },
           { id: 4, text: "Réponse 4" },
         ],
+        config: {
+          coefficient: 10,
+        },
       },
     ],
   },
@@ -37,6 +39,7 @@ const customPages: CustomPage[] = [
           { id: 3, text: "Réponse 3" },
           { id: 4, text: "Réponse 4" },
         ],
+        config: { coefficient: 4 },
       },
       {
         text: "Ceci est ma troisième question",
@@ -46,7 +49,7 @@ const customPages: CustomPage[] = [
           { id: 3, text: "Réponse 3" },
           { id: 4, text: "Réponse 4", isValid: true },
         ],
-        multiple: true,
+        config: { multiple: true, coefficient: 2 },
       },
     ],
   },
@@ -70,12 +73,8 @@ type CustomQcmProps = {
 };
 
 function CustomQcmComponent({ customQcm }: CustomQcmProps) {
-  const config: Partial<QcmConfiguration> = {
-    multiple: customQcm.multiple,
-    validOnSelect: !customQcm.multiple,
-  };
   return (
-    <Qcm config={config}>
+    <Qcm config={customQcm.config}>
       <p>{customQcm.text}</p>
       <div className="story-meknes-qcm-questions">
         {customQcm.responses.map((r) => (
@@ -95,9 +94,10 @@ const Template: Story = (args) => {
       <Questionnaire
         config={{ validOnSelect: true, showResultAfterResponse: true }}
       >
-        {({ questionnaire }) => {
+        {({ questionnaire, score }) => {
           return (
             <>
+              <p>{score}</p>
               <p>
                 {questionnaire.currentPage + 1}/{questionnaire.pages.length}
               </p>

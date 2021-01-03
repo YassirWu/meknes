@@ -1,3 +1,5 @@
+import { QcmConfiguration } from "../components/Qcm/QcmContext";
+
 export type CustomQcm = {
   text: string;
   responses: {
@@ -5,7 +7,7 @@ export type CustomQcm = {
     text: string;
     isValid?: boolean;
   }[];
-  multiple?: boolean;
+  config?: Partial<QcmConfiguration>;
 };
 
 export type CustomPage = {

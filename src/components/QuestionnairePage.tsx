@@ -15,7 +15,7 @@ export const QuestionnairePage: React.FunctionComponent = ({ children }) => {
 type QuestionnairePageContextProps = {
   results: ResultInformation[];
   setResults: (results: ResultInformation[]) => void;
-  addQuestion: (idQuestion: string) => void;
+  addQuestion: (idQuestion: string, coefficient: number) => void;
   response: (
     idQuestion: string,
     answer: AnswerInformation<any>,
@@ -50,12 +50,13 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
       value={{
         results,
         setResults,
-        addQuestion: (idQuestion) => {
+        addQuestion: (idQuestion, coefficient) => {
           setResults((prevState) => [
             ...prevState,
             {
               idQuestion,
               isAnswered: false,
+              coefficient,
             },
           ]);
         },

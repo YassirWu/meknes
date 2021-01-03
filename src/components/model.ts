@@ -3,6 +3,7 @@ export type ResultInformation = {
   answer?: AnswerInformation<any>;
   isAnswered: boolean;
   isValid?: boolean;
+  coefficient: number;
 };
 
 export type PageInformation = {

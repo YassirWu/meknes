@@ -7,11 +7,13 @@ import {
 
 export type QcmConfiguration = GlobalConfiguration & {
   multiple: boolean;
+  coefficient: number;
 };
 
-export const defaultQcmConfiguration = {
+export const defaultQcmConfiguration: QcmConfiguration = {
   ...defaultGlobalConfiguration,
   multiple: false,
+  coefficient: 1,
 };
 
 type QcmContextProps = {
