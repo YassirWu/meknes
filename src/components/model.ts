@@ -7,7 +7,7 @@ export type ResultInformation = {
 export type PageInformation = {
   idPage: number;
   results: ResultInformation[];
-}
+};
 
 export type QuestionnaireInformation = {
   pages: PageInformation[];
@@ -27,4 +27,14 @@ export type AnswerInformation = {
   isValid: boolean;
   userResponse: any;
   // goodResponse?: any;
+};
+
+export type GlobalConfiguration = {
+  validOnSelect: boolean;
+  showResultAfterResponse: boolean;
+};
+
+export const defaultGlobalConfiguration: GlobalConfiguration = {
+  validOnSelect: true,
+  showResultAfterResponse: true,
 };
