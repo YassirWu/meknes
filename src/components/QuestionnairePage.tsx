@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   QuestionnaireInformation,
@@ -6,20 +6,22 @@ import {
   ResultInformation,
   AnswerInformation,
 } from "./model";
-import { QuestionnaireContext } from './Questionnaire';
+import { QuestionnaireContext } from "./Questionnaire";
 
 export const QuestionnairePage: React.FunctionComponent = ({ children }) => {
   return <>{children}</>;
 };
 
 type QuestionnairePageContextProps = {
-  results: ResultInformation[],
-  setResults: (results: ResultInformation[]) => void,
-  addQuestion: (idQuestion: string) => void,
+  results: ResultInformation[];
+  setResults: (results: ResultInformation[]) => void;
+  addQuestion: (idQuestion: string) => void;
   response: (idQuestion: string, answer: AnswerInformation) => void;
-}
+};
 
-export const QuestionnairePageContext = React.createContext<QuestionnairePageContextProps>(undefined!);
+export const QuestionnairePageContext = React.createContext<
+  QuestionnairePageContextProps
+>(undefined!);
 
 type QuestionnairePageContainerProps = {
   current: boolean;
@@ -34,10 +36,10 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
   const { onAnswer } = React.useContext(QuestionnaireContext);
 
   React.useEffect(() => {
-    if (results.every(q => q.isAnswered)) {
+    if (results.every((q) => q.isAnswered)) {
       onAnswer(idPage, results);
     }
-  }, [results])
+  }, [results]);
 
   return (
     <QuestionnairePageContext.Provider
@@ -45,31 +47,32 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
         results,
         setResults,
         addQuestion: (idQuestion) => {
-          setResults(prevState => [...prevState, {
-            idQuestion,
-            isAnswered: false,
-          }]);
+          setResults((prevState) => [
+            ...prevState,
+            {
+              idQuestion,
+              isAnswered: false,
+            },
+          ]);
         },
         response: (idQuestion, answer) => {
-          setResults(prevState => {
-            const newState = prevState.map(p => {
+          setResults((prevState) => {
+            const newState = prevState.map((p) => {
               if (p.idQuestion === idQuestion) {
                 return {
                   ...p,
                   answer,
                   isAnswered: true,
-                }
+                };
               }
               return p;
             });
             return newState;
           });
-        }
+        },
       }}
     >
-      <div style={{ display: !current ? "none" : "block" }}>
-        {children}
-      </div>
+      <div style={{ display: !current ? "none" : "block" }}>{children}</div>
     </QuestionnairePageContext.Provider>
   );
 };
@@ -78,21 +81,24 @@ function initQuestionnaire(
   questionnaire: QuestionnaireInformation,
   children: React.ReactNode
 ): QuestionnaireInformation {
-  const pages: PageInformation[] = React.Children.map(children, (child, i) => {
-    return {
-      idPage: i,
-      results: [],
-    };
-  }) || [];
+  const pages: PageInformation[] =
+    React.Children.map(children, (child, i) => {
+      return {
+        idPage: i,
+        results: [],
+      };
+    }) || [];
 
   return {
     ...questionnaire,
     pages,
-  }
+  };
 }
 
 export const QuestionnairePages: React.FunctionComponent = ({ children }) => {
-  const { questionnaire, updateQuestionnaire } = React.useContext(QuestionnaireContext);
+  const { questionnaire, updateQuestionnaire } = React.useContext(
+    QuestionnaireContext
+  );
 
   React.useEffect(() => {
     updateQuestionnaire(initQuestionnaire(questionnaire, children));
@@ -103,11 +109,14 @@ export const QuestionnairePages: React.FunctionComponent = ({ children }) => {
       {React.Children.map(children, (child, i) => {
         const idPage = i;
         return (
-          <QuestionnairePageContainer current={questionnaire.currentPage === i} idPage={idPage}>
+          <QuestionnairePageContainer
+            current={questionnaire.currentPage === i}
+            idPage={idPage}
+          >
             {child}
           </QuestionnairePageContainer>
         );
       })}
     </>
-  )
-}
+  );
+};

@@ -4,6 +4,8 @@ import {
   newQuestionnaire,
   ResultInformation,
   PageInformation,
+  GlobalConfiguration,
+  defaultGlobalConfiguration,
 } from "./model";
 
 type QuestionnaireContextProps = {
@@ -12,6 +14,7 @@ type QuestionnaireContextProps = {
   previousQuestion: () => void;
   onAnswer: (idPage: number, results: ResultInformation[]) => void;
   updateQuestionnaire: (questionnaire: QuestionnaireInformation) => void;
+  globalConfiguration: GlobalConfiguration;
 };
 export const QuestionnaireContext = React.createContext<
   QuestionnaireContextProps
@@ -29,13 +32,21 @@ export const useQuestionnaire = () => {
 };
 
 type QuestionnaireProps = {
-  children: (context: QuestionnaireContextProps) => ReactElement;
+  config?: Partial<GlobalConfiguration>;
+  children:
+    | ((context: QuestionnaireContextProps) => ReactElement)
+    | ReactElement;
 };
 
 export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
   children,
+  config = {},
 }) => {
   const { questionnaire, updateQuestionnaire } = useQuestionnaire();
+  const mergedGlobalConfiguration = {
+    ...defaultGlobalConfiguration,
+    ...config,
+  };
 
   const nextQuestion = () => {
     if (questionnaire.currentPage < questionnaire.pages.length - 1) {
@@ -77,11 +88,12 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
       updateQuestionnaire(newQuestionnaire);
     },
     updateQuestionnaire,
+    globalConfiguration: mergedGlobalConfiguration,
   };
 
   return (
     <QuestionnaireContext.Provider value={ctx}>
-      {children(ctx)}
+      {typeof children === "function" ? children(ctx) : children}
     </QuestionnaireContext.Provider>
   );
 };
