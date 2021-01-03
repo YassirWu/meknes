@@ -5,6 +5,7 @@ export type CustomQcm = {
     text: string;
     isValid?: boolean;
   }[];
+  multiple?: boolean;
 };
 
 export type CustomPage = {

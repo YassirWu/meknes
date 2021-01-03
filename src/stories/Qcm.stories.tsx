@@ -3,11 +3,13 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import { Questionnaire } from "../components/Questionnaire";
 import { QuestionnairePages } from "../components/QuestionnairePage";
-import { QcmAnswer, Qcm, ValidAnswer } from "../components/Qcm";
+import { Qcm } from "../components/Qcm";
 import {
   defaultGlobalConfiguration,
   GlobalConfiguration,
 } from "../components/model";
+import QcmAnswer from "../components/Qcm/QcmAnswer";
+import ValidQcmAnswer from "../components/Qcm/ValidQcmAnswer";
 
 type TemplateArgs = {
   config?: Partial<GlobalConfiguration>;
@@ -26,7 +28,7 @@ const Template: Story<TemplateArgs> = ({ config }) => {
           </QcmAnswer>
           <QcmAnswer idResponse={4}>Fourth answer</QcmAnswer>
 
-          <ValidAnswer>Validate answer</ValidAnswer>
+          <ValidQcmAnswer>Validate answer</ValidQcmAnswer>
         </Qcm>
       </QuestionnairePages>
     </Questionnaire>
