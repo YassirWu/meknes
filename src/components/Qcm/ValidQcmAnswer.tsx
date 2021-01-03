@@ -5,10 +5,10 @@ const ValidQcmAnswer: React.FunctionComponent = ({ children }) => {
   const {
     submitAnswer,
     isSubmittingQcm,
-    config: { validOnSelect },
+    config: { validOnSelect, multiple },
   } = React.useContext(QcmContext);
 
-  const isDisabled = validOnSelect || isSubmittingQcm;
+  const isDisabled = (validOnSelect && !multiple) || isSubmittingQcm;
 
   return (
     <button onClick={submitAnswer} disabled={isDisabled}>
