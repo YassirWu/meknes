@@ -16,7 +16,11 @@ type QuestionnairePageContextProps = {
   results: ResultInformation[];
   setResults: (results: ResultInformation[]) => void;
   addQuestion: (idQuestion: string) => void;
-  response: (idQuestion: string, answer: AnswerInformation) => void;
+  response: (
+    idQuestion: string,
+    answer: AnswerInformation<any>,
+    isValid: boolean
+  ) => void;
 };
 
 export const QuestionnairePageContext = React.createContext<
@@ -55,7 +59,7 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
             },
           ]);
         },
-        response: (idQuestion, answer) => {
+        response: (idQuestion, answer, isValid) => {
           setResults((prevState) => {
             const newState = prevState.map((p) => {
               if (p.idQuestion === idQuestion) {
@@ -63,6 +67,7 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
                   ...p,
                   answer,
                   isAnswered: true,
+                  isValid,
                 };
               }
               return p;

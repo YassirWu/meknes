@@ -1,7 +1,8 @@
 export type ResultInformation = {
   idQuestion: string;
-  answer?: AnswerInformation;
+  answer?: AnswerInformation<any>;
   isAnswered: boolean;
+  isValid?: boolean;
 };
 
 export type PageInformation = {
@@ -23,10 +24,8 @@ export function newQuestionnaire(): QuestionnaireInformation {
   };
 }
 
-export type AnswerInformation = {
-  isValid: boolean;
-  userResponse: any;
-  // goodResponse?: any;
+export type AnswerInformation<T> = {
+  userResponse: T;
 };
 
 export type GlobalConfiguration = {
