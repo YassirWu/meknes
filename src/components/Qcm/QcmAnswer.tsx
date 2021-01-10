@@ -1,6 +1,7 @@
 import React from "react";
 import clsx from "clsx";
 import QcmContext from "./QcmContext";
+import { QuestionnairePageContext } from "../QuestionnairePage";
 
 const useQcmAnswerClassNames = ({
   idResponse,
@@ -41,6 +42,7 @@ const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
   const { onAnswer, isSubmittingQcm, declareAnswer } = React.useContext(
     QcmContext
   );
+  const { current } = React.useContext(QuestionnairePageContext);
 
   const classNames = useQcmAnswerClassNames({ idResponse, isValid });
 
@@ -49,6 +51,10 @@ const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
       declareAnswer(idResponse, isValid);
     }
   }, []);
+
+  if (!current) {
+    return null;
+  }
 
   return (
     <button

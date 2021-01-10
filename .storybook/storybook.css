@@ -29,6 +29,9 @@
   background-color: var(--color-blue-background-user);
   color: var(--color-white);
 }
+.meknes-answer--user:hover:not(.meknes-answer--disabled) {
+  background-color: var(--color-blue-background-user);
+}
 
 .meknes-answer--good {
   background-color: var(--color-green-background-valid);

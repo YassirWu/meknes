@@ -21,6 +21,7 @@ type QuestionnairePageContextProps = {
     answer: AnswerInformation<any>,
     isValid: boolean
   ) => void;
+  current: boolean;
 };
 
 export const QuestionnairePageContext = React.createContext<
@@ -76,6 +77,7 @@ export const QuestionnairePageContainer: React.FunctionComponent<QuestionnairePa
             return newState;
           });
         },
+        current,
       }}
     >
       <div style={{ display: !current ? "none" : "block" }}>{children}</div>
