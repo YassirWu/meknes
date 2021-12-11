@@ -94,19 +94,22 @@ const Template: Story = (args) => {
       <Questionnaire
         config={{ validOnSelect: true, showResultAfterResponse: true }}
       >
-        {({ questionnaire, score }) => {
+        {({ pages, currentPage, score, total, isFinished }) => {
           return (
             <>
-              <p>{score}</p>
               <p>
-                {questionnaire.currentPage + 1}/{questionnaire.pages.length}
+                {score}/{total}
               </p>
+              <p>
+                {currentPage + 1}/{pages.length}
+              </p>
+              {isFinished && <p>Finished</p>}
               <QuestionnairePages>
                 {customPages.map((page, i) => (
-                  <QuestionnairePage>
+                  <QuestionnairePage key={i}>
                     <div className="story-meknes-page">
-                      {page.customQcm.map((qcm) => (
-                        <CustomQcmComponent customQcm={qcm} />
+                      {page.customQcm.map((qcm, j) => (
+                        <CustomQcmComponent key={`${i} ${j}`} customQcm={qcm} />
                       ))}
                       <div className="story-meknes-qcm-actions">
                         {i > 0 && <PreviousQuestion>Previous</PreviousQuestion>}

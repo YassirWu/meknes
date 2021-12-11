@@ -50,7 +50,7 @@ const QcmAnswer: React.FunctionComponent<QcmAnswerProps> = ({
     if (isValid) {
       declareAnswer(idResponse, isValid);
     }
-  }, []);
+  }, [idResponse, isValid]);
 
   if (!current) {
     return null;

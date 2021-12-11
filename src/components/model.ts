@@ -1,4 +1,5 @@
-export type ResultInformation = {
+export type QuestionInformation = {
+  idPage: string;
   idQuestion: string;
   answer?: AnswerInformation<any>;
   isAnswered: boolean;
@@ -7,23 +8,9 @@ export type ResultInformation = {
 };
 
 export type PageInformation = {
-  idPage: number;
-  results: ResultInformation[];
+  idPage: string;
+  indexPage: number;
 };
-
-export type QuestionnaireInformation = {
-  pages: PageInformation[];
-  score: number;
-  currentPage: number;
-};
-
-export function newQuestionnaire(): QuestionnaireInformation {
-  return {
-    pages: [],
-    score: 0,
-    currentPage: 0,
-  };
-}
 
 export type AnswerInformation<T> = {
   userResponse: T;
