@@ -14,8 +14,10 @@ type QcmProps = {
 
 const useQcmInit = (config: Partial<QcmConfiguration>) => {
   const [idQuestion] = React.useState(getUniqId());
-  const { globalConfiguration } = React.useContext(QuestionnaireContext);
-  const { addQuestion } = React.useContext(QuestionnairePageContext);
+  const { globalConfiguration, addQuestion } = React.useContext(
+    QuestionnaireContext
+  );
+  const { idPage } = React.useContext(QuestionnairePageContext);
 
   const mergedQcmConfiguration = {
     ...defaultQcmConfiguration,
@@ -24,7 +26,7 @@ const useQcmInit = (config: Partial<QcmConfiguration>) => {
   };
 
   React.useEffect(() => {
-    addQuestion(idQuestion, mergedQcmConfiguration.coefficient);
+    addQuestion(idPage, idQuestion, mergedQcmConfiguration.coefficient);
   }, []);
 
   return { idQuestion, mergedQcmConfiguration };
@@ -41,17 +43,20 @@ export const Qcm: React.FunctionComponent<QcmProps> = ({
   const [goodAnswers, setGoodAnswers] = React.useState<number[]>([]);
   const [isSubmittingQcm, setIsSubmittingQcm] = React.useState(false);
 
-  const { response } = React.useContext(QuestionnairePageContext);
+  const { response } = React.useContext(QuestionnaireContext);
 
-  const submitQcm = (answer: AnswerInformation<number[]>) => {
-    const isValid = config.multiple
-      ? goodAnswers.length === answer.userResponse.length &&
-        goodAnswers.every((g) => answer.userResponse.includes(g))
-      : goodAnswers.includes(answer.userResponse?.[0]);
+  const submitQcm = React.useCallback(
+    (answer: AnswerInformation<number[]>) => {
+      const isValid = config.multiple
+        ? goodAnswers.length === answer.userResponse.length &&
+          goodAnswers.every((g) => answer.userResponse.includes(g))
+        : goodAnswers.includes(answer.userResponse?.[0]);
 
-    setIsSubmittingQcm(true);
-    response(idQuestion, answer, isValid);
-  };
+      setIsSubmittingQcm(true);
+      response(idQuestion, answer, isValid);
+    },
+    [config, goodAnswers, idQuestion, response]
+  );
 
   const onAnswer = (value: number) => {
     // remove response

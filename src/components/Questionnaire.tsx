@@ -1,34 +1,102 @@
 import React, { ReactElement } from "react";
 import {
-  QuestionnaireInformation,
-  newQuestionnaire,
-  ResultInformation,
+  QuestionInformation,
   PageInformation,
   GlobalConfiguration,
   defaultGlobalConfiguration,
+  AnswerInformation,
 } from "./model";
 
 type QuestionnaireContextProps = {
-  questionnaire: QuestionnaireInformation;
+  pages: PageInformation[];
+  currentPage: number;
   nextQuestion: () => void;
   previousQuestion: () => void;
-  onAnswer: (idPage: number, results: ResultInformation[]) => void;
-  updateQuestionnaire: (questionnaire: QuestionnaireInformation) => void;
+  onAnswer: (idPage: string, results: QuestionInformation[]) => void;
+  addPageToQuestionnaire: (indexPage: number, idPage: string) => void;
   globalConfiguration: GlobalConfiguration;
   score: number;
+  total: number;
+  questions: QuestionInformation[];
+  addQuestion: (
+    idPage: string,
+    idQuestion: string,
+    coefficient: number
+  ) => void;
+  response: (
+    idQuestion: string,
+    answer: AnswerInformation<any>,
+    isValid: boolean
+  ) => void;
+  isFinished: boolean;
 };
 export const QuestionnaireContext = React.createContext<
   QuestionnaireContextProps
 >(undefined!);
 
 export const useQuestionnaire = () => {
-  const [questionnaire, updateQuestionnaire] = React.useState<
-    QuestionnaireInformation
-  >(newQuestionnaire());
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const [pages, setPages] = React.useState<PageInformation[]>([]);
+  const [questions, setQuestions] = React.useState<QuestionInformation[]>([]);
+
+  const addPageToQuestionnaire = React.useCallback(
+    (indexPage: number, idPage: string) => {
+      setPages((prevState) => [
+        ...prevState,
+        {
+          indexPage,
+          idPage,
+        },
+      ]);
+    },
+    []
+  );
+
+  const addQuestion = React.useCallback(
+    (idPage: string, idQuestion: string, coefficient: number) => {
+      setQuestions((prevState) => [
+        ...prevState,
+        {
+          idPage,
+          idQuestion,
+          isAnswered: false,
+          coefficient,
+        },
+      ]);
+    },
+    []
+  );
+
+  const response = React.useCallback(
+    (idQuestion: string, answer: AnswerInformation<any>, isValid: boolean) => {
+      setQuestions((prevState) => {
+        const newState = prevState.map((p) => {
+          if (p.idQuestion === idQuestion) {
+            return {
+              ...p,
+              answer,
+              isAnswered: true,
+              isValid,
+            };
+          }
+          return p;
+        });
+        return newState;
+      });
+    },
+    []
+  );
 
   return {
-    questionnaire,
-    updateQuestionnaire,
+    pages,
+    setPages,
+    addPageToQuestionnaire,
+    questions,
+    setQuestions,
+    addQuestion,
+    currentPage,
+    setCurrentPage,
+    response,
   };
 };
 
@@ -43,48 +111,56 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
   children,
   config = {},
 }) => {
-  const { questionnaire, updateQuestionnaire } = useQuestionnaire();
+  const {
+    pages,
+    setPages,
+    currentPage,
+    setCurrentPage,
+    addPageToQuestionnaire,
+    questions,
+    addQuestion,
+    response,
+  } = useQuestionnaire();
+
   const mergedGlobalConfiguration = {
     ...defaultGlobalConfiguration,
     ...config,
   };
 
   const score = React.useMemo(() => {
-    return questionnaire.pages.reduce(
-      (totalScore, page) =>
-        totalScore +
-        page.results.reduce(
-          (pageScore, result) =>
-            result.isValid ? pageScore + result.coefficient : pageScore,
-          0
-        ),
+    return questions.reduce(
+      (result, question) =>
+        question.isValid ? result + question.coefficient : result,
       0
     );
-  }, [questionnaire]);
+  }, [questions]);
 
-  const nextQuestion = () => {
-    if (questionnaire.currentPage < questionnaire.pages.length - 1) {
-      updateQuestionnaire({
-        ...questionnaire,
-        currentPage: questionnaire.currentPage + 1,
-      });
-    }
-  };
-  const previousQuestion = () => {
-    if (questionnaire.currentPage > 0) {
-      updateQuestionnaire({
-        ...questionnaire,
-        currentPage: questionnaire.currentPage - 1,
-      });
-    }
-  };
+  const total = React.useMemo(() => {
+    return questions.reduce(
+      (result, question) => result + question.coefficient,
+      0
+    );
+  }, [questions]);
 
-  const ctx: QuestionnaireContextProps = {
-    questionnaire,
-    nextQuestion,
-    previousQuestion,
-    onAnswer: (idPage, results) => {
-      const newPages = questionnaire.pages.map((page, i) => {
+  const isFinished = React.useMemo(() => questions.every((q) => q.isAnswered), [
+    questions,
+  ]);
+
+  const nextQuestion = React.useCallback(() => {
+    if (currentPage < pages.length - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  }, [currentPage, pages, setCurrentPage]);
+
+  const previousQuestion = React.useCallback(() => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  }, [currentPage, setCurrentPage]);
+
+  const onAnswer = React.useCallback(
+    (idPage: string, results: QuestionInformation[]) => {
+      const newPages = pages.map((page, i) => {
         if (page.idPage === idPage) {
           return {
             ...page,
@@ -94,16 +170,25 @@ export const Questionnaire: React.FunctionComponent<QuestionnaireProps> = ({
 
         return page;
       });
-      const newQuestionnaire: QuestionnaireInformation = {
-        ...questionnaire,
-        pages: newPages,
-      };
-
-      updateQuestionnaire(newQuestionnaire);
+      setPages(newPages);
     },
-    updateQuestionnaire,
+    [pages, setPages]
+  );
+
+  const ctx: QuestionnaireContextProps = {
+    pages,
+    currentPage,
+    nextQuestion,
+    previousQuestion,
+    onAnswer,
+    addPageToQuestionnaire,
+    questions,
+    addQuestion,
+    response,
     globalConfiguration: mergedGlobalConfiguration,
     score,
+    total,
+    isFinished,
   };
 
   return (
