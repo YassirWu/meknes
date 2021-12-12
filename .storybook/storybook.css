@@ -1,0 +1,65 @@
+:root {
+  --color-green-background-valid: #388e3c;
+  --color-red-background-error: #e53935;
+  --color-blue-background-user: #1565c0;
+  --color-white: #fff;
+}
+
+.meknes-answer {
+  background-color: #e0e0e0;
+  cursor: pointer;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 10px;
+  -webkit-box-shadow: 3px 3px 8px 3px rgba(227, 227, 227, 1);
+  -moz-box-shadow: 3px 3px 8px 3px rgba(227, 227, 227, 1);
+  box-shadow: 3px 3px 8px 3px rgba(227, 227, 227, 1);
+  transition: all 0.5s ease;
+}
+
+.meknes-answer:hover:not(.meknes-answer--disabled) {
+  background-color: #aeaeae;
+}
+
+.meknes-answer--disabled {
+  cursor: default;
+}
+
+.meknes-answer--user {
+  background-color: var(--color-blue-background-user);
+  color: var(--color-white);
+}
+.meknes-answer--user:hover:not(.meknes-answer--disabled) {
+  background-color: var(--color-blue-background-user);
+}
+
+.meknes-answer--good {
+  background-color: var(--color-green-background-valid);
+  color: var(--color-white);
+}
+
+.meknes-answer--wrong {
+  background-color: var(--color-red-background-error);
+  color: var(--color-white);
+}
+
+.story-meknes-page {
+  max-width: 600px;
+}
+
+.story-meknes-qcm-questions {
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.story-meknes-qcm-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* .story-meknes-qcm-questions .meknes-answer {
+  margin-right: 10px;
+} */
