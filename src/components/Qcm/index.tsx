@@ -32,10 +32,7 @@ const useQcmInit = (config: Partial<QcmConfiguration>) => {
   return { idQuestion, mergedQcmConfiguration };
 };
 
-export const Qcm: React.FunctionComponent<QcmProps> = ({
-  children,
-  config = {},
-}) => {
+const Qcm: React.FunctionComponent<QcmProps> = ({ children, config = {} }) => {
   const { idQuestion, mergedQcmConfiguration } = useQcmInit(config);
   const [answer, setAnswer] = React.useState<AnswerInformation<number[]>>({
     userResponse: [],
@@ -108,3 +105,5 @@ export const Qcm: React.FunctionComponent<QcmProps> = ({
     </QcmContext.Provider>
   );
 };
+
+export default Qcm;

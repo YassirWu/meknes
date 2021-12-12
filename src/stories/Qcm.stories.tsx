@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react/types-6-0";
 
 import { Questionnaire } from "../components/Questionnaire";
 import { QuestionnairePages } from "../components/QuestionnairePage";
-import { Qcm } from "../components/Qcm";
+import Qcm from "../components/Qcm";
 import {
   defaultGlobalConfiguration,
   GlobalConfiguration,

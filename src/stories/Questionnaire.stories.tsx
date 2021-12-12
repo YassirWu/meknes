@@ -6,7 +6,7 @@ import {
   QuestionnairePages,
   QuestionnairePage,
 } from "../components/QuestionnairePage";
-import { Qcm } from "../components/Qcm";
+import Qcm from "../components/Qcm";
 import { NextQuestion, PreviousQuestion } from "../components/NavigationButton";
 import { CustomPage, CustomQcm } from "./utils";
 import QcmAnswer from "../components/Qcm/QcmAnswer";
