@@ -1,53 +1,9 @@
 {
   "name": "meknes",
   "version": "0.0.7",
-  "private": false,
-  "main": "./dist/index.js",
-  "dependencies": {
-    "@types/node": "^12.0.0",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
-    "clsx": "^1.1.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "^4.0.3",
-    "typescript": "~3.7.2"
-  },
-  "scripts": {
-    "build": "tsc",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@babel/core": "^7.11.4",
-    "@storybook/addon-actions": "^6.0.19",
-    "@storybook/addon-essentials": "^6.0.19",
-    "@storybook/addon-links": "^6.0.19",
-    "@storybook/node-logger": "^6.0.19",
-    "@storybook/preset-create-react-app": "^3.1.4",
-    "@storybook/react": "^6.0.19",
-    "babel-loader": "^8.1.0",
-    "react-is": "^17.0.2"
-  },
-  "files": [
-    "/dist",
-    "package.json"
-  ],
+  "dependencies": {},
+  "scripts": {},
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/YassirWu/meknes"
