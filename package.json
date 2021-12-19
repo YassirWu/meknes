@@ -1,11 +1,16 @@
 {
   "name": "meknes",
   "version": "0.0.7",
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {},
   "scripts": {},
   "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/YassirWu/meknes"
-  }
+  },
+  "license": "Apache-2.0",
+  "private": true
 }

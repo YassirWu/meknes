@@ -1,9 +1,9 @@
 {
-  "name": "meknes-components",
-  "version": "0.0.7",
+  "name": "@meknes/meknes-components",
+  "version": "0.0.8",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --declaration",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -51,5 +51,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YassirWu/meknes.git"
-  }
+  },
+  "license": "Apache-2.0"
 }
